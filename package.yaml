@@ -1,0 +1,45 @@
+name: bounce-bench
+version: 0.1.0
+category: acme
+
+dependencies:
+  - base
+  - clash-prelude
+  - clash-lib
+  - clash-ghc
+  - sdl2
+  - mtl
+  - text
+  - array
+  - lens
+  - ghc-typelits-natnormalise
+  - ghc-typelits-extra
+  - ghc-typelits-knownnat
+  - clock
+
+
+ghc-options:
+  -fplugin GHC.TypeLits.KnownNat.Solver
+  -fplugin GHC.TypeLits.Normalise
+  -fplugin GHC.TypeLits.Extra.Solver
+
+default-extensions:
+  - NoImplicitPrelude
+  - DataKinds
+  - TypeFamilies
+  - FlexibleContexts
+  - TemplateHaskell
+  - DeriveGeneric
+  - DeriveAnyClass
+  - NoStarIsType
+  - TypeOperators
+  - TypeApplications
+  - ScopedTypeVariables
+
+source-dirs:
+  - src
+  
+executables:
+  sim-batch:
+    main: SimBatch.hs
+    

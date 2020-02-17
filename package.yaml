@@ -39,7 +39,6 @@ default-extensions:
 source-dirs:
   - src
   
-executables:
-  sim-batch:
-    main: SimBatch.hs
-    
+executable:
+  source-dirs: sim
+  main: sim-batch.hs

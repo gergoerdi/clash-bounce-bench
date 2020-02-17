@@ -16,6 +16,7 @@ dependencies:
   - ghc-typelits-extra
   - ghc-typelits-knownnat
   - clock
+  - monad-loops
 
 
 ghc-options:
@@ -39,6 +40,11 @@ default-extensions:
 source-dirs:
   - src
   
-executable:
-  source-dirs: sim
-  main: sim-batch.hs
+executables:
+  sim-batch:
+    source-dirs: sim
+    main: sim-batch.hs
+
+  sim-sdl:
+    source-dirs: sim
+    main: sim-sdl.hs

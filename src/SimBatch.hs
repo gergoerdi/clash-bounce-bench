@@ -2,8 +2,6 @@
 module Main where
 
 import Bounce
-import RetroClash.Sim.VGA
-import RetroClash.Sim.SDL
 
 import RetroClash.Utils
 import RetroClash.VGA
@@ -17,16 +15,18 @@ import Data.Word
 import Debug.Trace
 import Data.List as L
 import System.Clock
+import Text.Printf
 
 main :: IO ()
 main = do
     t0 <- getTime Monotonic
-    let loop ((hsync, vsync, _):os) = do
-            let endOfFrame = hsync == low && vsync == low
-            unless endOfFrame $ loop os
-    loop $ simulate topEntity' $ L.repeat ()
+    let ins = L.repeat ()
+        finished (hsync, vsync, _) = hsync == low && vsync == low
+        outs = takeWhile (not . finished) $ simulate topEntity' ins
+        len = L.length outs
+    len `seq` return ()
     t <- getTime Monotonic
-    print $ millisec t - millisec t0
+    printf "%d cycles, %d ms\n" len (millisec t - millisec t0)
   where
     topEntity' sw =
         let VGAOut{ vgaSync = VGASync{..}, ..} = topEntity clockGen resetGen sw

@@ -50,7 +50,9 @@ executables:
     main: sim-sdl.hs
 
   sim-ffi:
-    source-dirs: sim
+    source-dirs:
+      - sim
+      - csim
     main: sim-ffi.hs
 
     build-tools: hsc2hs

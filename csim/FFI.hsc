@@ -1,13 +1,14 @@
-{-# LANGUAGE RecordWildCards #-}
-{-# LANGUAGE ForeignFunctionInterface #-}
+{-# LANGUAGE RecordWildCards, ForeignFunctionInterface #-}
+module FFI where
 
 import Prelude
+import Clash.Prelude
+
 import Data.Word
 import Data.Int
 import Foreign.Storable
 import Foreign.Ptr
 import Foreign.Marshal.Alloc
-import Control.Monad
 
 #include "Bounce.h"
 
@@ -16,12 +17,19 @@ data INPUT = INPUT
     }
 
 data OUTPUT = OUTPUT
-    { vgaHSYNC, vgaVSYNC, vgaDE :: Bool
+    { vgaHSYNC, vgaVSYNC :: Bit
+    , vgaDE :: Bool
     , vgaRED, vgaGREEN, vgaBLUE :: Word64
     }
     deriving (Show)
 
 foreign import ccall "Bounce" topEntity :: Ptr INPUT -> Ptr OUTPUT -> IO ()
+
+instance Storable Bit where
+    alignment = alignment . bitToBool
+    sizeOf = sizeOf . bitToBool
+    peek = fmap boolToBit . peek . castPtr
+    poke ptr = poke (castPtr ptr) . bitToBool
 
 instance Storable INPUT where
     alignment _ = #alignment INPUT
@@ -48,25 +56,3 @@ instance Storable OUTPUT where
         (#poke OUTPUT, VGA_RED)   ptr vgaRED
         (#poke OUTPUT, VGA_GREEN) ptr vgaGREEN
         (#poke OUTPUT, VGA_BLUE)  ptr vgaBLUE
-
-main :: IO ()
-main = do
-    inp <- malloc
-    poke inp $ INPUT{ reset = False }
-    outp <- malloc
-
-    forM_ [1..60] $ \_ -> do
-        let loop = do
-                topEntity inp outp
-                out <- peek outp
-                if vgaVSYNC out then loop else return ()
-        loop
-
-        -- out <- peek outp
-        -- print out
-
-        let loop = do
-                topEntity inp outp
-                out <- peek outp
-                if not (vgaVSYNC out) then loop else return ()
-        loop

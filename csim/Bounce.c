@@ -3,8 +3,8 @@
 
 #include <stdio.h>
 
-typedef bool Bit;
-typedef bool Reset;
+typedef uint64_t Bit;
+typedef uint64_t Reset;
 typedef uint64_t U8;
 typedef uint64_t M_I640;
 typedef uint64_t M_I480;
@@ -171,9 +171,6 @@ void Bounce(INPUT* input, OUTPUT* output)
         (!frameEnd) ? ballY_speedY :
         bounceBetween2;
 
-    /* if (frameEnd) */
-    /*     printf("%3d %3d\n", ballX, ballY); */
-
     // isBall
     bool nearX =
         SLICE(vgaX, 10, 10) == 0 ? false :
@@ -202,6 +199,9 @@ void Bounce(INPUT* input, OUTPUT* output)
     frameEnd_buf = input->RESET ? false : frameEnd_buf_;
     ballX_speedX = input->RESET ? (0 << 11) | (3 << 0) : ballX_speedX_;
     ballY_speedY = input->RESET ? (0 << 10) | (2 << 0) : ballY_speedY_;
+
+    /* if (frameEnd) */
+    /*     printf("%3ld %3ld\n", ballX, ballY); */
 }
 
 int main (int argc, char **argv)
@@ -212,7 +212,7 @@ int main (int argc, char **argv)
 
     int i = 0;
 
-    for (int j = 0; j < 1200; ++j)
+    for (int j = 0; j < 60; ++j)
     {
         for (;; ++i)
         {

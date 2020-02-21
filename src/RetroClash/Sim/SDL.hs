@@ -23,6 +23,7 @@ import Data.Word
 import Control.Concurrent (threadDelay)
 import Data.Text (Text)
 import Control.Monad
+import Control.Monad.IO.Class
 import Data.Array.IO
 import Data.IORef
 
@@ -87,40 +88,41 @@ rasterizeRay ray other = Rasterizer $ \ptr stride -> do
 
 
 withMainWindow
-    :: forall w h s. (KnownNat w, KnownNat h)
+    :: forall w h m. (KnownNat w, KnownNat h, MonadIO m)
     => Text
     -> CInt
-    -> s
-    -> ([Event] -> (Scancode -> Bool) -> s -> IO (Maybe (Rasterizer w h, s)))
-    -> IO ()
-withMainWindow title screenScale s0 runFrame = do
+    -> ([Event] -> (Scancode -> Bool) -> m (Maybe (Rasterizer w h)))
+    -> m ()
+withMainWindow title screenScale runFrame = do
     initializeAll
     window <- createWindow title defaultWindow
     windowSize window $= fmap (screenScale *) screenSize
 
     renderer <- createRenderer window (-1) defaultRenderer
     texture <- createTexture renderer RGBA8888 TextureAccessStreaming screenSize
+    return (window, renderer, texture)
+
     let render rasterizer = do
             (ptr, stride) <- lockTexture texture Nothing
             let ptr' = castPtr ptr
-            runRasterizer rasterizer ptr' (fromIntegral stride)
+            liftIO $ runRasterizer rasterizer ptr' (fromIntegral stride)
             unlockTexture texture
             SDL.copy renderer texture Nothing Nothing
             present renderer
 
-    let loop s = do
+    let loop = do
             before <- ticks
             events <- pollEvents
             keys <- getKeyboardState
             let windowClosed = any isQuitEvent events
-            endState <- if windowClosed then return Nothing else runFrame events keys s
-            forM_ endState $ \(draw, s') -> do
+            draw <- if windowClosed then return Nothing else runFrame events keys
+            forM_ draw $ \draw -> do
                 render draw
                 after <- ticks
                 let elapsed = after - before
-                when (elapsed < frameTime) $ threadDelay (fromIntegral (frameTime - elapsed) * 1000)
-                loop s'
-    loop s0
+                when (elapsed < frameTime) $ liftIO $ threadDelay (fromIntegral (frameTime - elapsed) * 1000)
+                loop
+    loop
 
     destroyWindow window
   where

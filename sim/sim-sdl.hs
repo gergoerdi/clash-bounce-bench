@@ -55,7 +55,7 @@ main = do
     liftIO $ writeChan inChan ()
     is <- liftIO $ getChanContents inChan
 
-    withMainWindow "VGA" 3 (simulate topEntity' is, initSink) $ \events keyState -> (fmap Just .) $ runStateT $ do
+    flip evalStateT (simulate topEntity' is, initSink) $ withMainWindow "VGA" 3 $ \events keyState -> fmap Just $ do
         i <- return ()
 
         t0 <- liftIO $ getTime Monotonic

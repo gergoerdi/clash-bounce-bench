@@ -23,7 +23,7 @@ data OUTPUT = OUTPUT
     }
     deriving (Show)
 
-foreign import ccall "Bounce" topEntity :: Ptr INPUT -> Ptr OUTPUT -> IO ()
+foreign import ccall unsafe "Bounce" topEntity :: Ptr INPUT -> Ptr OUTPUT -> IO ()
 
 instance Storable Bit where
     alignment = alignment . bitToBool

@@ -56,9 +56,9 @@ main = do
                     peek outp
                 let hsync = vgaHSYNC
                     vsync = vgaVSYNC
-                    vgaR = 0 -- fromIntegral vgaRED
-                    vgaG = 0 -- fromIntegral vgaGREEN
-                    vgaB = 0 -- fromIntegral vgaBLUE
+                    vgaR = fromIntegral vgaRED
+                    vgaG = fromIntegral vgaGREEN
+                    vgaB = fromIntegral vgaBLUE
 
                 return (hsync, vsync, (vgaR, vgaG, vgaB))
             vgaSinkBuf vgaMode buf vgaOut

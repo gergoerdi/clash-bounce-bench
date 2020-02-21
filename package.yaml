@@ -57,9 +57,10 @@ executables:
     main: sim-ffi.hs
 
     build-tools: hsc2hs
+    include-dirs: csim
     c-sources:
         - csim/Bounce.c
-    include-dirs: csim
+    cc-options: -O3
     
   sim-ffi-sdl:
     <<: *ffi

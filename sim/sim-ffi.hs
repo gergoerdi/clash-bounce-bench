@@ -24,7 +24,6 @@ main = do
     outp <- malloc
 
     let finished OUTPUT{..} = vgaHSYNC == low && vgaVSYNC == low
-        started OUTPUT{..} = vgaHSYNC == high && vgaHSYNC == high
 
     let loop1 n = do
             topEntity inp outp
@@ -36,8 +35,6 @@ main = do
             out <- peek outp
             let n' = n + 1
             if vgaDE out then return n' else loop2 n'
-
-    loop1 (0 :: Int)
 
     t0 <- getTime Monotonic
     n <- loop1 (0 :: Int)

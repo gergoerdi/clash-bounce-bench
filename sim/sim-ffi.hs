@@ -35,8 +35,13 @@ main = do
             out <- peek outp
             let n' = n + 1
             if vgaDE out then return n' else loop2 n'
+        loop3 k n
+          | k < 60 = do
+              n <- loop1 n
+              loop3 (k + 1) n
+          | otherwise = return n
 
     t0 <- getTime Monotonic
-    n <- loop1 (0 :: Int)
+    n <- loop3 (0 :: Int) (0 :: Int)
     t <- getTime Monotonic
     printf "%d cycles, %d ms\n" n (millisec t - millisec t0)

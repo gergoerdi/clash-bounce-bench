@@ -24,16 +24,22 @@ main = do
     outp <- malloc
 
     let finished OUTPUT{..} = vgaHSYNC == low && vgaVSYNC == low
+        started OUTPUT{..} = vgaHSYNC == high && vgaHSYNC == high
+
+    let loop1 n = do
+            topEntity inp outp
+            out <- peek outp
+            let n' = n + 1
+            if finished out then loop2 n' else loop1 n'
+        loop2 n = do
+            topEntity inp outp
+            out <- peek outp
+            let n' = n + 1
+            if vgaDE out then return n' else loop2 n'
+
+    loop1 (0 :: Int)
 
     t0 <- getTime Monotonic
-    forM_ [1..60] $ \_ -> do
-        whileM $ do
-            topEntity inp outp
-            out <- peek outp
-            return $ not $ finished out
-        whileM $ do
-            topEntity inp outp
-            out <- peek outp
-            return $ finished out
+    n <- loop1 (0 :: Int)
     t <- getTime Monotonic
-    printf "%d ms\n" (millisec t - millisec t0)
+    printf "%d cycles, %d ms\n" n (millisec t - millisec t0)

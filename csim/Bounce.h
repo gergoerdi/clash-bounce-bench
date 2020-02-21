@@ -23,7 +23,7 @@ typedef struct
 {
     Bit VGA_HSYNC;
     Bit VGA_VSYNC;
-    Bit VGA_DE;
+    bool VGA_DE;
     U8 VGA_RED;
     U8 VGA_GREEN;
     U8 VGA_BLUE;

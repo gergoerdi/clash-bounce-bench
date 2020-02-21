@@ -50,7 +50,7 @@ executables:
     source-dirs: sim
     main: sim-sdl.hs
 
-  sim-ffi:
+  sim-ffi: &ffi
     source-dirs:
       - sim
       - csim
@@ -58,6 +58,9 @@ executables:
 
     build-tools: hsc2hs
     c-sources:
-        - csim/Bounce.h
         - csim/Bounce.c
     include-dirs: csim
+    
+  sim-ffi-sdl:
+    <<: *ffi
+    main: sim-ffi-sdl.hs

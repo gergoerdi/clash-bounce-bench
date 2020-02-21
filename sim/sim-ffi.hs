@@ -10,6 +10,12 @@ import Foreign.Storable
 import Foreign.Ptr
 import Foreign.Marshal.Alloc
 import Control.Monad
+import System.Clock
+import Control.Monad.Extra
+import Text.Printf
+
+millisec :: TimeSpec -> Int64
+millisec (TimeSpec sec nsec) = sec * 1_000 + nsec `div` 1_000_000
 
 main :: IO ()
 main = do
@@ -17,18 +23,17 @@ main = do
     poke inp $ INPUT{ reset = False }
     outp <- malloc
 
+    let finished OUTPUT{..} = vgaHSYNC == low && vgaVSYNC == low
+
+    t0 <- getTime Monotonic
     forM_ [1..60] $ \_ -> do
-        let loop = do
-                topEntity inp outp
-                out <- peek outp
-                if vgaVSYNC out == high then loop else return ()
-        loop
-
-        out <- peek outp
-        print out
-
-        let loop = do
-                topEntity inp outp
-                out <- peek outp
-                if vgaVSYNC out == low then loop else return ()
-        loop
+        whileM $ do
+            topEntity inp outp
+            out <- peek outp
+            return $ not $ finished out
+        whileM $ do
+            topEntity inp outp
+            out <- peek outp
+            return $ finished out
+    t <- getTime Monotonic
+    printf "%d ms\n" (millisec t - millisec t0)

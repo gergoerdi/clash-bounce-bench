@@ -17,6 +17,7 @@ dependencies:
   - ghc-typelits-knownnat
   - clock
   - monad-loops
+  - extra
 
 
 ghc-options:

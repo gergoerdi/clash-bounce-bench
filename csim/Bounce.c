@@ -10,14 +10,10 @@
 #define MK_S11_S11(x, y) ((uint32_t)(SLICE((x), 10, 0)) << 11 | (uint32_t)(SLICE((y), 10, 0)))
 #define MK_S10_S10(x, y) ((uint32_t)(SLICE((x), 9, 0)) << 10 | (uint32_t)(SLICE((y), 9, 0)))
 
-void Bounce(INPUT* input, OUTPUT* output)
+void Bounce(const INPUT* input, OUTPUT* output)
 {
     // vgaDriver
     static VGAState1 stateH = (0 << 10) | 0;
-    static VGAState2 stateV = (0 << 9) | 0;
-
-    bool endLine = SLICE(stateH, 11, 10) == 3 && SLICE(stateH, 9, 0) == 47;
-
     VGAState1 stateH_ =
         SLICE(stateH, 11, 10) == 0 ? (SLICE(stateH, 9, 0) == 639 ? ((1 << 10) | 0) : ((0 << 10) | SLICE(stateH, 9, 0) + 1)) :
         SLICE(stateH, 11, 10) == 1 ? (SLICE(stateH, 9, 0) == 15 ? ((2 << 10) | 0) : ((1 << 10) | SLICE(stateH, 9, 0) + 1)) :
@@ -25,6 +21,14 @@ void Bounce(INPUT* input, OUTPUT* output)
         SLICE(stateH, 11, 10) == 3 ? (SLICE(stateH, 9, 0) == 47 ? ((0 << 10) | 0) : ((3 << 10) | SLICE(stateH, 9, 0) + 1)) :
         0;
 
+    Bool endLine = SLICE(stateH, 11, 10) == 3 && SLICE(stateH, 9, 0) == 47;
+
+    M_I640 vgaX = SLICE(stateH, 11, 10) == 0 ?
+        ((1 << 10) | SLICE(stateH, 9, 0)) : 0;
+    Bit vgaSync_vgaHSync = SLICE(stateH, 11, 10) == 2 ?
+        false : true;
+
+    static VGAState2 stateV = (0 << 9) | 0;
     VGAState2 stateV_ =
         (! endLine) ? stateV :
         SLICE(stateV, 10, 9) == 0 ? (SLICE(stateV, 8, 0) == 479 ? ((1 << 9) | 0) : ((0 << 9) | SLICE(stateV, 8, 0) + 1)) :
@@ -33,11 +37,6 @@ void Bounce(INPUT* input, OUTPUT* output)
         SLICE(stateV, 10, 9) == 3 ? (SLICE(stateV, 8, 0) == 30 ? ((0 << 9) | 0) : ((3 << 9) | SLICE(stateV, 8, 0) + 1)) :
         0;
 
-    M_I640 vgaX = SLICE(stateH, 11, 10) == 0 ?
-        ((1 << 10) | SLICE(stateH, 9, 0)) : 0;
-    Bit vgaSync_vgaHSync = SLICE(stateH, 11, 10) == 2 ?
-        false : true;
-
     M_I480 vgaY = SLICE(stateV, 10, 9) == 0 ?
         ((1 << 9) | SLICE(stateV, 8, 0)) : 0;
     Bit vgaSync_vgaVSync = SLICE(stateV, 10, 9) == 2 ?
@@ -45,9 +44,9 @@ void Bounce(INPUT* input, OUTPUT* output)
 
     Bit vgaSync_vgaDE = SLICE(vgaX, 10, 10) && SLICE(vgaY, 9, 9);
 
-    static bool frameEnd_buf = false;
-    bool frameEnd_buf_ = SLICE(vgaY, 9, 9);
-    bool frameEnd = frameEnd_buf && !frameEnd_buf_;
+    static Bool frameEnd_buf = false;
+    Bool frameEnd_buf_ = SLICE(vgaY, 9, 9);
+    Bool frameEnd = frameEnd_buf && !frameEnd_buf_;
 
     static S11_S11 ballX_speedX = (0 << 11) | (3 << 0);
 
@@ -64,7 +63,7 @@ void Bounce(INPUT* input, OUTPUT* output)
         S11 reflect_x = SLICE_S(move1, 21, 11);
         S11 reflect_dx = SLICE_S(move1, 10, 0);
         S11 reflect_diff = reflect_p - reflect_x;
-        bool sameDir =
+        Bool sameDir =
             ((reflect_n < 0 ? -1 : reflect_n == 0 ? 0 : 1) ==
              (reflect_diff < 0 ? -1 : reflect_diff == 0 ? 0 : 1));
 
@@ -80,7 +79,7 @@ void Bounce(INPUT* input, OUTPUT* output)
         S11 reflect_x = SLICE_S(reflect11, 21, 11);
         S11 reflect_dx = SLICE_S(reflect11, 10, 0);
         S11 reflect_diff = reflect_p - reflect_x;
-        bool sameDir =
+        Bool sameDir =
             ((reflect_n < 0 ? -1 : reflect_n == 0 ? 0 : 1) ==
              (reflect_diff < 0 ? -1 : reflect_diff == 0 ? 0 : 1));
 
@@ -110,7 +109,7 @@ void Bounce(INPUT* input, OUTPUT* output)
         S10 reflect_x = SLICE_S(move2, 19, 10);
         S10 reflect_dx = SLICE_S(move2, 9, 0);
         S10 reflect_diff = reflect_p - reflect_x;
-        bool sameDir =
+        Bool sameDir =
             ((reflect_n < 0 ? -1 : reflect_n == 0 ? 0 : 1) ==
              (reflect_diff < 0 ? -1 : reflect_diff == 0 ? 0 : 1));
 
@@ -127,7 +126,7 @@ void Bounce(INPUT* input, OUTPUT* output)
         S10 reflect_x = SLICE_S(reflect21, 19, 10);
         S10 reflect_dx = SLICE_S(reflect21, 9, 0);
         S10 reflect_diff = reflect_p - reflect_x;
-        bool sameDir =
+        Bool sameDir =
             ((reflect_n < 0 ? -1 : reflect_n == 0 ? 0 : 1) ==
              (reflect_diff < 0 ? -1 : reflect_diff == 0 ? 0 : 1));
 
@@ -143,10 +142,10 @@ void Bounce(INPUT* input, OUTPUT* output)
         bounceBetween2;
 
     // isBall
-    bool nearX =
+    Bool nearX =
         SLICE(vgaX, 10, 10) == 0 ? false :
         (ballX <= SLICE(vgaX, 9, 0) && SLICE(vgaX, 9, 0) < (ballX + 15));
-    bool nearY =
+    Bool nearY =
         SLICE(vgaY, 9, 9) == 0 ? false :
         (ballY <= SLICE(vgaY, 8, 0) && SLICE(vgaY, 8, 0) < (ballY + 15));
     U24 bouncingBall = (nearX && nearY) ? 0xf0e040 : 0x303030;
@@ -165,6 +164,14 @@ void Bounce(INPUT* input, OUTPUT* output)
     output->VGA_GREEN = vgaOut_vgaG;
     output->VGA_BLUE = vgaOut_vgaB;
 
+    /* printf ("%01lx %4ld -> %01lx %4ld %d\n", */
+    /*         SLICE(stateH, 11, 10), SLICE(stateH, 9, 0), */
+    /*         SLICE(stateH_, 11, 10), SLICE(stateH_, 9, 0), */
+    /*         vgaSync_vgaHSync); */
+
+    /* fprintf(stdout, "SIM %d   ", output->VGA_HSYNC); */
+    /* fflush(stdout); */
+
     stateH = input->RESET ? ((0 << 10) | 0) : stateH_;
     stateV = input->RESET ? ((0 << 9) | 0) : stateV_;
     frameEnd_buf = input->RESET ? false : frameEnd_buf_;
@@ -172,5 +179,9 @@ void Bounce(INPUT* input, OUTPUT* output)
     ballY_speedY = input->RESET ? (0 << 10) | (2 << 0) : ballY_speedY_;
 
     /* if (frameEnd) */
-    /*     printf("%3ld %3ld\n", ballX, ballY); */
+    /* { */
+    /*     printf("%3ld %3ld %d %d\n", ballX, ballY, vgaSync_vgaHSync, vgaSync_vgaVSync); */
+    /* } */
+    /* if (endLine) */
+    /*     printf("%d %d\n", vgaSync_vgaHSync, vgaSync_vgaVSync); */
 }

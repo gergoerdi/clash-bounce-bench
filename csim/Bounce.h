@@ -1,7 +1,8 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-typedef bool Bit;
+typedef uint64_t Bool;
+typedef Bool Bit;
 typedef Bit Reset;
 typedef uint64_t U8;
 typedef uint64_t M_I640;
@@ -29,4 +30,4 @@ typedef struct
     U8 VGA_BLUE;
 } OUTPUT;
 
-void Bounce(INPUT* input, OUTPUT* output);
+void Bounce(const INPUT* input, OUTPUT* output);

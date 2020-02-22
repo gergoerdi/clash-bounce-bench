@@ -8,6 +8,7 @@ module Main where
 import Bounce
 import RetroClash.Sim.VGA
 import RetroClash.Sim.SDL
+import RetroClash.Sim.VGASDL
 
 import RetroClash.Utils
 import RetroClash.VGA
@@ -25,27 +26,8 @@ import SDL hiding (get)
 import Control.Lens
 import System.Clock
 
--- vgaMode = vga640x480sim
-vgaMode = vga150x150sim
-
-vgaWidth :: (KnownNat w) => VGATimings ps w h -> SNat w
-vgaWidth _ = SNat
-
-vgaHeight :: (KnownNat h) => VGATimings ps w h -> SNat h
-vgaHeight _ = SNat
-
-vgaSinkBuf
-    :: (KnownNat w, KnownNat h, MonadIO m)
-    => VGATimings ps w h
-    -> BufferArray w h
-    -> (Bit, Bit, (Word8, Word8, Word8))
-    -> StateT (SinkState, SinkState) m Bool
-vgaSinkBuf vgaMode (BufferArray arr) = vgaSink vgaMode writeBuf
-  where
-    writeBuf x y (r, g, b) = liftIO $ do
-        writeArray arr (x, y, 0) r
-        writeArray arr (x, y, 1) g
-        writeArray arr (x, y, 2) b
+vgaMode = vga640x480at60
+-- vgaMode = vga150x150sim
 
 main :: IO ()
 main = do

@@ -45,8 +45,8 @@ topEntity = withEnableGen board
   where
     board _ = vgaOut vgaSync $ mask (pure (0, 0, 0)) bouncingBall vgaX' vgaY'
       where
-        VGADriver{..} = vgaDriver vga150x150sim
-        -- VGADriver{..} = vgaDriver vga640x480at60
+        -- VGADriver{..} = vgaDriver vga150x150sim
+        VGADriver{..} = vgaDriver vga640x480at60
         vgaX' = scale (SNat @2) . center @128 $ vgaX
         vgaY' = scale (SNat @2) . center @128 $ vgaY
 

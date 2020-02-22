@@ -4,8 +4,9 @@ import Prelude
 import Clash.Prelude hiding (undefined)
 import FFI
 
-import RetroClash.Sim.VGA
 import RetroClash.Sim.SDL
+import RetroClash.Sim.VGA
+import RetroClash.Sim.VGASDL
 import RetroClash.VGA
 
 import Data.Word
@@ -23,19 +24,6 @@ import Control.Monad.Loops
 import Text.Printf
 
 vgaMode = vga640x480at60
-
-vgaSinkBuf
-    :: (KnownNat w, KnownNat h, MonadIO m)
-    => VGATimings ps w h
-    -> BufferArray w h
-    -> (Bit, Bit, (Word8, Word8, Word8))
-    -> StateT (SinkState, SinkState) m Bool
-vgaSinkBuf vgaMode (BufferArray arr) = vgaSink vgaMode writeBuf
-  where
-    writeBuf x y (r, g, b) = liftIO $ do
-        writeArray arr (x, y, 0) r
-        writeArray arr (x, y, 1) g
-        writeArray arr (x, y, 2) b
 
 millisec :: TimeSpec -> Int64
 millisec (TimeSpec sec nsec) = sec * 1_000 + nsec `div` 1_000_000

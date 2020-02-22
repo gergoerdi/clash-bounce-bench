@@ -1,4 +1,4 @@
-CFLAGS	 = -std=c99
+CFLAGS	 = -std=c99 -O3
 
 Bounce: Bounce.o BounceTest.o
 

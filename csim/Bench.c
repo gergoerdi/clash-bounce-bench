@@ -1,6 +1,7 @@
 #include "Bounce.h"
 
 #include <stdio.h>
+#include <time.h>
 
 int main (int argc, char **argv)
 {
@@ -8,25 +9,27 @@ int main (int argc, char **argv)
     input.RESET = false;
     OUTPUT output;
 
-    int i = 0;
     int cycles = 0;
 
-    for (int j = 0; j < 60; ++j)
+    clock_t t0 = clock();
+    for (int i = 0; i < 10; ++i)
     {
-        for (;; ++i)
+        for (;;)
         {
             Bounce(&input, &output);
-            cycles++;
+            ++cycles;
             if (!output.VGA_HSYNC && !output.VGA_VSYNC) break;
         }
 
-        for (;; ++i)
+        for (;;)
         {
             Bounce(&input, &output);
-            cycles++;
+            ++cycles;
             if (output.VGA_DE) break;
         }
     }
+    clock_t t = clock();
+    int ms = (((double)(t - t0))/CLOCKS_PER_SEC) * 1000;
 
-    printf("%d cycles\n", cycles);
+    printf("Hand-translated C, from C: %d cycles, %d ms\n", cycles, ms);
 }

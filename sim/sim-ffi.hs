@@ -36,14 +36,12 @@ main = alloca $ \inp -> alloca $ \outp -> do
             let n' = n + 1
             if vgaDE out then return n' else loop2 n'
 
-        loop3 :: Int -> Int -> IO Int
-        loop3 !k !n
-          | k < 60 = do
-              n <- loop1 n
-              loop3 (k + 1) n
+        loop :: Int -> Int -> IO Int
+        loop !k !n
+          | k > 0 = loop (k - 1) =<< loop1 n
           | otherwise = return n
 
     t0 <- getTime Monotonic
-    n <- loop3 (0 :: Int) (0 :: Int)
+    n <- loop 10 0
     t <- getTime Monotonic
-    printf "%d cycles, %d ms\n" n (millisec t - millisec t0)
+    printf "Hand-translated C, from Haskell: %d cycles, %d ms\n" n (millisec t - millisec t0)

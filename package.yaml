@@ -43,13 +43,13 @@ source-dirs:
   - src
   
 executables:
-  sim-batch:
+  sim-hs:
     source-dirs: sim
-    main: sim-batch.hs
+    main: sim-hs.hs
 
-  sim-sdl:
+  sim-hs-sdl:
     source-dirs: sim
-    main: sim-sdl.hs
+    main: sim-hs.hs
 
   sim-ffi: &ffi
     source-dirs:

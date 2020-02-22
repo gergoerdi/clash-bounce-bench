@@ -1,10 +1,10 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-typedef uint64_t Bool;
+typedef int Bool;
 typedef Bool Bit;
 typedef Bit Reset;
-typedef uint64_t U8;
+typedef uint8_t U8;
 typedef uint64_t M_I640;
 typedef uint64_t M_I480;
 typedef uint64_t U24;

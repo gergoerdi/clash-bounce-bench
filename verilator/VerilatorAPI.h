@@ -1,15 +1,18 @@
 #include <stdint.h>
 
+typedef int Bool;
+typedef Bool Bit;
+
 typedef struct
 {
-    uint8_t RESET;
+    Bool RESET;
 } INPUT;
 
 typedef struct
 {
-    uint8_t VGA_HSYNC;
-    uint8_t VGA_VSYNC;
-    uint8_t VGA_DE;
+    Bit VGA_HSYNC;
+    Bit VGA_VSYNC;
+    Bool VGA_DE;
     uint8_t VGA_RED;
     uint8_t VGA_GREEN;
     uint8_t VGA_BLUE;

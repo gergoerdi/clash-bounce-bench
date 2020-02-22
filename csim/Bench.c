@@ -18,14 +18,14 @@ int main (int argc, char **argv)
         {
             Bounce(&input, &output);
             ++cycles;
-            if (!output.VGA_HSYNC && !output.VGA_VSYNC) break;
+            if (output.VGA_HSYNC == 0 && output.VGA_VSYNC == 0) break;
         }
 
         for (;;)
         {
             Bounce(&input, &output);
             ++cycles;
-            if (output.VGA_DE) break;
+            if (output.VGA_DE == 1) break;
         }
     }
     clock_t t = clock();

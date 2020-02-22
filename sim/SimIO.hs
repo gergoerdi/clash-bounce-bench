@@ -16,19 +16,19 @@ millisec (TimeSpec sec nsec) = sec * 1_000 + nsec `div` 1_000_000
 {-# INLINE runBench #-}
 runBench :: String -> (INPUT -> IO OUTPUT) -> IO ()
 runBench title runCycle = do
-    let inp = INPUT{ reset = 0 }
+    let inp = INPUT{ reset = False }
 
     let loop1 :: Int -> IO Int
         loop1 !n = do
             out@OUTPUT{..} <- runCycle inp
             let n' = n + 1
-            if vgaHSYNC == 0 && vgaVSYNC == 0 then loop2 n' else loop1 n'
+            if vgaHSYNC == low && vgaVSYNC == low then loop2 n' else loop1 n'
 
         loop2 :: Int -> IO Int
         loop2 !n = do
             out@OUTPUT{..} <- runCycle inp
             let n' = n + 1
-            if vgaDE == 1 then return n' else loop2 n'
+            if vgaDE then return n' else loop2 n'
 
         loop :: Int -> Int -> IO Int
         loop !k !n

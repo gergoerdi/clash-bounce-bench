@@ -42,6 +42,7 @@ instance Storable INPUT where
 instance Storable OUTPUT where
     alignment _ = #alignment OUTPUT
     sizeOf _ = #size OUTPUT
+    {-# INLINE peek #-}
     peek ptr    = OUTPUT
         <$> (#peek OUTPUT, VGA_HSYNC) ptr
         <*> (#peek OUTPUT, VGA_VSYNC) ptr

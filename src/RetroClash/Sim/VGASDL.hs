@@ -13,6 +13,7 @@ import Control.Monad.State
 import Data.Word
 import Data.Array.IO
 
+{-# INLINE vgaSinkBuf #-}
 vgaSinkBuf
     :: (KnownNat w, KnownNat h, MonadIO m)
     => VGATimings ps w h

@@ -1,4 +1,5 @@
 {-# LANGUAGE RecordWildCards, NumericUnderscores #-}
+{-# LANGUAGE BangPatterns #-}
 
 import Prelude
 import Clash.Prelude
@@ -21,17 +22,22 @@ main :: IO ()
 main = alloca $ \inp -> alloca $ \outp -> do
     poke inp $ INPUT{ reset = False }
 
-    let loop1 n = do
+    let loop1 :: Int -> IO Int
+        loop1 !n = do
             topEntity inp outp
             out@OUTPUT{..} <- peek outp
             let n' = n + 1
             if vgaHSYNC == low && vgaVSYNC == low then loop2 n' else loop1 n'
-        loop2 n = do
+
+        loop2 :: Int -> IO Int
+        loop2 !n = do
             topEntity inp outp
             out <- peek outp
             let n' = n + 1
             if vgaDE out then return n' else loop2 n'
-        loop3 k n
+
+        loop3 :: Int -> Int -> IO Int
+        loop3 !k !n
           | k < 60 = do
               n <- loop1 n
               loop3 (k + 1) n

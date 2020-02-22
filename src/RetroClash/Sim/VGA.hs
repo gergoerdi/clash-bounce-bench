@@ -25,6 +25,7 @@ data SinkState
     | Retrace Int
     deriving (Show)
 
+{-# INLINE vgaSink #-}
 vgaSink
     :: forall w h r g b m ps. (KnownNat w, KnownNat h, Monad m)
     => VGATimings ps w h

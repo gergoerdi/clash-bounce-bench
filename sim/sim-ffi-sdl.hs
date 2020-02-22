@@ -36,8 +36,8 @@ main = do
     outp <- malloc
 
     buf <- newBufferArray
-    flip evalStateT (0, initSink) $ withMainWindow "VGA" 1 $ \events keyState -> fmap Just $ do
-        t0 <- liftIO $ getTime Monotonic
+    t0 <- liftIO $ getTime Monotonic
+    flip evalStateT (initSink, (0, t0)) $ withMainWindow "VGA" 1 $ \events keyState -> fmap Just $ do
         untilM_ (return ()) $ do
             vgaOut <- do
                 OUTPUT{..} <- liftIO $ do
@@ -50,14 +50,16 @@ main = do
                     vgaB = fromIntegral vgaBLUE
 
                 return (hsync, vsync, (vgaR, vgaG, vgaB))
-            zoom _2 $ vgaSinkBuf vgaMode buf vgaOut
+            zoom _1 $ vgaSinkBuf vgaMode buf vgaOut
 
-        zoom _1 $ do
-            i <- get
+        zoom _2 $ do
+            (i, t0) <- get
             if i == 60 then do
                 t <- liftIO $ getTime Monotonic
-                liftIO $ print $ millisec t - millisec t0
-                put 0
-              else put $! (i + 1)
+                let dt = millisec t - millisec t0
+                    fps = 1000 / (fromIntegral dt / 60) :: Double
+                liftIO $ printf "60 frames in %d ms, %.1f fps\n" dt fps
+                put (0, t)
+              else put (i + 1, t0)
 
         return $ rasterizeBuffer buf

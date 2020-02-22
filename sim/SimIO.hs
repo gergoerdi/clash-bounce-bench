@@ -14,8 +14,8 @@ millisec :: TimeSpec -> Int64
 millisec (TimeSpec sec nsec) = sec * 1_000 + nsec `div` 1_000_000
 
 {-# INLINE runBench #-}
-runBench :: (INPUT -> IO OUTPUT) -> IO ()
-runBench runCycle = do
+runBench :: String -> (INPUT -> IO OUTPUT) -> IO ()
+runBench title runCycle = do
     let inp = INPUT{ reset = False }
 
     let loop1 :: Int -> IO Int
@@ -38,4 +38,4 @@ runBench runCycle = do
     t0 <- getTime Monotonic
     n <- loop 10 0
     t <- getTime Monotonic
-    printf "Hand-translated C, from Haskell: %d cycles, %d ms\n" n (millisec t - millisec t0)
+    printf "%s: %d cycles, %d ms\n" title n (millisec t - millisec t0)

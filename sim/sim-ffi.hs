@@ -15,4 +15,4 @@ withRunner act = alloca $ \inp -> alloca $ \outp -> act $ \input -> do
     peek outp
 
 main :: IO ()
-main = withRunner runBench
+main = withRunner $ runBench "Hand-translated C, from Haskell"

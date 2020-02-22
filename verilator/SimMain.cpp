@@ -5,10 +5,14 @@
 
 int main(int argc, char** argv, char** env)
 {
-    Verilated::commandArgs(argc, argv);
-    VBounce top;
+    VBounce* top = init();
 
-    top.RESET = 1;
+    INPUT input;
+    OUTPUT output;
+
+    input.RESET = 1;
+    step(top, &input, &output);
+    input.RESET = 0;
 
     int cycles = 0;
 
@@ -17,16 +21,16 @@ int main(int argc, char** argv, char** env)
     {
         for (;;)
         {
-            step(top);
+            step(top, &input, &output);
             cycles++;
-            if (top.VGA_HSYNC == 0 && top.VGA_VSYNC == 0) break;
+            if (output.VGA_HSYNC == 0 && output.VGA_VSYNC == 0) break;
         }
 
         for (;;)
         {
-            step(top);
+            step(top, &input, &output);
             cycles++;
-            if (top.VGA_DE) break;
+            if (output.VGA_DE) break;
         }
     }
     clock_t t = clock();

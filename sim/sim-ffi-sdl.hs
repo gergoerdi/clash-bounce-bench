@@ -22,6 +22,7 @@ import Data.Array.IO
 import System.Clock
 import Control.Monad.Loops
 import Text.Printf
+import Control.Lens
 
 vgaMode = vga640x480at60
 
@@ -35,7 +36,7 @@ main = do
     outp <- malloc
 
     buf <- newBufferArray
-    flip evalStateT initSink $ withMainWindow "VGA" 1 $ \events keyState -> fmap Just $ do
+    flip evalStateT (0, initSink) $ withMainWindow "VGA" 1 $ \events keyState -> fmap Just $ do
         t0 <- liftIO $ getTime Monotonic
         untilM_ (return ()) $ do
             vgaOut <- do
@@ -49,8 +50,14 @@ main = do
                     vgaB = fromIntegral vgaBLUE
 
                 return (hsync, vsync, (vgaR, vgaG, vgaB))
-            vgaSinkBuf vgaMode buf vgaOut
-        t <- liftIO $ getTime Monotonic
-        liftIO $ print $ millisec t - millisec t0
+            zoom _2 $ vgaSinkBuf vgaMode buf vgaOut
+
+        zoom _1 $ do
+            i <- get
+            if i == 60 then do
+                t <- liftIO $ getTime Monotonic
+                liftIO $ print $ millisec t - millisec t0
+                put 0
+              else put $! (i + 1)
 
         return $ rasterizeBuffer buf

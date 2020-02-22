@@ -17,19 +17,13 @@ data INPUT = INPUT
     }
 
 data OUTPUT = OUTPUT
-    { vgaHSYNC, vgaVSYNC :: Bit
+    { vgaHSYNC, vgaVSYNC :: Bool
     , vgaDE :: Bool
     , vgaRED, vgaGREEN, vgaBLUE :: Word64
     }
     deriving (Show)
 
 foreign import ccall unsafe "Bounce" topEntity :: Ptr INPUT -> Ptr OUTPUT -> IO ()
-
-instance Storable Bit where
-    alignment = alignment . bitToBool
-    sizeOf = sizeOf . bitToBool
-    peek = fmap boolToBit . peek . castPtr
-    poke ptr = poke (castPtr ptr) . bitToBool
 
 instance Storable INPUT where
     alignment _ = #alignment INPUT

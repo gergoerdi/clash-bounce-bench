@@ -16,8 +16,8 @@ import Data.Proxy
 
 import Debug.Trace
 
-vgaRetrace :: VGATiming visible -> (Int, Bit)
-vgaRetrace VGATiming{..} = (snatToNum pulseWidth + snatToNum postWidth - 1, toActiveDyn polarity True)
+vgaRetrace :: VGATiming visible -> (Int, Bool)
+vgaRetrace VGATiming{..} = (snatToNum pulseWidth + snatToNum postWidth - 1, toActiveDyn polarity True == high)
 
 data SinkState
     = Visible Int
@@ -30,7 +30,7 @@ vgaSink
     :: forall w h r g b m ps. (KnownNat w, KnownNat h, Monad m)
     => VGATimings ps w h
     -> (Int -> Int -> (r, g, b) -> m ())
-    -> (Bit, Bit, (r, g, b))
+    -> (Bool, Bool, (r, g, b))
     -> StateT (SinkState, SinkState) m Bool
 vgaSink VGATimings{..} paint (hsync0, vsync0, color) = do
     (x, endLine) <- zoom _1 $ direction w horizRetrace hsync

@@ -18,7 +18,7 @@ vgaSinkBuf
     :: (KnownNat w, KnownNat h, MonadIO m)
     => VGATimings ps w h
     -> BufferArray w h
-    -> (Bit, Bit, (Word8, Word8, Word8))
+    -> (Bool, Bool, (Word8, Word8, Word8))
     -> StateT (SinkState, SinkState) m Bool
 vgaSinkBuf vgaMode (BufferArray arr) = vgaSink vgaMode writeBuf
   where

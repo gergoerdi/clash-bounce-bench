@@ -27,7 +27,7 @@ main = alloca $ \inp -> alloca $ \outp -> do
             topEntity inp outp
             out@OUTPUT{..} <- peek outp
             let n' = n + 1
-            if vgaHSYNC == low && vgaVSYNC == low then loop2 n' else loop1 n'
+            if vgaHSYNC == False && vgaVSYNC == False then loop2 n' else loop1 n'
 
         loop2 :: Int -> IO Int
         loop2 !n = do

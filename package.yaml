@@ -24,6 +24,7 @@ ghc-options:
   -fplugin GHC.TypeLits.KnownNat.Solver
   -fplugin GHC.TypeLits.Normalise
   -fplugin GHC.TypeLits.Extra.Solver
+  -O3
 
 default-extensions:
   - NoImplicitPrelude

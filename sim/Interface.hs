@@ -7,13 +7,13 @@ import Data.Word
 import Data.Int
 
 data INPUT = INPUT
-    { reset :: Bool
+    { reset :: Word8
     }
     deriving (Show)
 
 data OUTPUT = OUTPUT
-    { vgaHSYNC, vgaVSYNC :: Bit
-    , vgaDE :: Bool
-    , vgaRED, vgaGREEN, vgaBLUE :: Word64
+    { vgaHSYNC, vgaVSYNC :: Word8
+    , vgaDE :: Word8
+    , vgaRED, vgaGREEN, vgaBLUE :: Word8
     }
     deriving (Show)

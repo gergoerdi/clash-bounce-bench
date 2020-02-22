@@ -37,7 +37,7 @@ runSDL title runCycle = do
     buf <- newBufferArray
     t0 <- getTime Monotonic
 
-    let input = INPUT{ reset = False }
+    let input = INPUT{ reset = 0 }
 
     flip evalStateT (initSink, (0, t0)) $ withMainWindow title 1 $ \events keyState -> fmap Just $ do
         untilM_ (return ()) $ do

@@ -43,12 +43,9 @@ topEntity
     -> VGAOut Dom25 8 8 8
 topEntity = withEnableGen board
   where
-    board _ = vgaOut vgaSync $ mask (pure (0, 0, 0)) bouncingBall vgaX' vgaY'
+    board _ = vgaOut vgaSync $ bouncingBall vgaX vgaY
       where
-        -- VGADriver{..} = vgaDriver vga150x150sim
         VGADriver{..} = vgaDriver vga640x480at60
-        vgaX' = scale (SNat @2) . center @128 $ vgaX
-        vgaY' = scale (SNat @2) . center @128 $ vgaY
 
 mask
     :: (HiddenClockResetEnable dom)
@@ -59,7 +56,7 @@ mask def f x y = mux visible (f x y) def
   where
     visible = (isJust <$> x) .&&. (isJust <$> y)
 
-type BallSize = 5
+type BallSize = 15
 
 bouncingBall
     :: (KnownNat w, KnownNat h {-, KnownNat r, KnownNat g, KnownNat b -})

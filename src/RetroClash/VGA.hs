@@ -31,9 +31,9 @@ data VGASync dom = VGASync
 
 data VGAOut dom (r :: Nat) (g :: Nat) (b :: Nat) = VGAOut
     { vgaSync  :: VGASync dom
-    , vgaR     :: Signal dom Word8
-    , vgaG     :: Signal dom Word8
-    , vgaB     :: Signal dom Word8
+    , vgaR     :: Signal dom (Unsigned r)
+    , vgaG     :: Signal dom (Unsigned g)
+    , vgaB     :: Signal dom (Unsigned b)
     }
 
 data VGADriver dom w h = VGADriver
@@ -127,18 +127,10 @@ vgaDriver VGATimings{..} = case (vgaCounter vgaHorizTiming, vgaCounter vgaVertTi
 vgaOut
     :: (HiddenClockResetEnable dom, KnownNat r, KnownNat g, KnownNat b)
     => VGASync dom
-    -> Signal dom (Word8, Word8, Word8)
+    -> Signal dom (Unsigned r, Unsigned g, Unsigned b)
     -> VGAOut dom r g b
 vgaOut vgaSync@VGASync{..} rgb = VGAOut{..}
   where
-    -- (r, g, b) = unbundle rgb
-    -- vgaR = blank r
-    -- vgaG = blank g
-    -- vgaB = blank b
-
-    -- blank :: (KnownNat n) => _ (Unsigned n) -> _ (Unsigned n)
-    -- blank = mux (not <$> vgaDE) 0
-
     (vgaR, vgaG, vgaB) = unbundle $ mux (not <$> vgaDE) (pure (0, 0, 0)) rgb
 
 

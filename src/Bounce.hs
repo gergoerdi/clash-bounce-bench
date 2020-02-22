@@ -59,13 +59,12 @@ mask def f x y = mux visible (f x y) def
 type BallSize = 15
 
 bouncingBall
-    :: (KnownNat w, KnownNat h {-, KnownNat r, KnownNat g, KnownNat b -})
+    :: (KnownNat w, KnownNat h, KnownNat r, KnownNat g, KnownNat b)
     => ((BallSize + 2) <= w, (BallSize + 1) <= h)
     => (HiddenClockResetEnable dom)
     => Signal dom (Maybe (Index w))
     -> Signal dom (Maybe (Index h))
-    -- -> Signal dom (Unsigned r, Unsigned g, Unsigned b)
-    -> Signal dom (Word8, Word8, Word8)
+    -> Signal dom (Unsigned r, Unsigned g, Unsigned b)
 bouncingBall vgaX vgaY = mux isBall ballColor backColor
   where
     frameEnd = isFalling False (isJust <$> vgaY)

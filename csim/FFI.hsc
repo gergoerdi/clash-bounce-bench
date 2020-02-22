@@ -4,6 +4,8 @@ module FFI where
 import Prelude
 import Clash.Prelude
 
+import Interface
+
 import Data.Word
 import Data.Int
 import Foreign.Storable
@@ -11,17 +13,6 @@ import Foreign.Ptr
 import Foreign.Marshal.Alloc
 
 #include "Bounce.h"
-
-data INPUT = INPUT
-    { reset :: Bool
-    }
-
-data OUTPUT = OUTPUT
-    { vgaHSYNC, vgaVSYNC :: Bit
-    , vgaDE :: Bool
-    , vgaRED, vgaGREEN, vgaBLUE :: Word64
-    }
-    deriving (Show)
 
 foreign import ccall unsafe "Bounce" topEntity :: Ptr INPUT -> Ptr OUTPUT -> IO ()
 

@@ -1,0 +1,19 @@
+module Interface where
+
+import Prelude
+import Clash.Prelude
+
+import Data.Word
+import Data.Int
+
+data INPUT = INPUT
+    { reset :: Bool
+    }
+    deriving (Show)
+
+data OUTPUT = OUTPUT
+    { vgaHSYNC, vgaVSYNC :: Bit
+    , vgaDE :: Bool
+    , vgaRED, vgaGREEN, vgaBLUE :: Word64
+    }
+    deriving (Show)

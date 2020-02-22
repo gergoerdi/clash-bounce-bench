@@ -2,6 +2,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 import Prelude
 import Clash.Prelude hiding (undefined)
+import Interface
 import FFI
 
 import RetroClash.Sim.SDL

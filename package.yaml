@@ -67,7 +67,7 @@ executables:
     <<: *ffi
     main: sim-ffi-sdl.hs
 
-  sim-verilator:
+  sim-verilator: &verilator
     source-dirs:
       - sim
       - verilator
@@ -78,3 +78,7 @@ executables:
     
     build-tools: hsc2hs
     include-dirs: verilator
+
+  sim-verilator-sdl:
+    <<: *verilator
+    main: sim-verilator-sdl.hs

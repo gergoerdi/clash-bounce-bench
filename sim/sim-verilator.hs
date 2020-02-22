@@ -1,6 +1,5 @@
 {-# LANGUAGE RecordWildCards, ForeignFunctionInterface #-}
 import Prelude
-import Clash.Prelude hiding (undefined)
 import Interface
 import SimIO
 import VerilatorFFI

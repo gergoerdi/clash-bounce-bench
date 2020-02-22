@@ -43,13 +43,7 @@ runSDL title runCycle = do
         untilM_ (return ()) $ do
             vgaOut <- do
                 OUTPUT{..} <- liftIO $ runCycle input
-                let hsync = vgaHSYNC
-                    vsync = vgaVSYNC
-                    vgaR = fromIntegral vgaRED
-                    vgaG = fromIntegral vgaGREEN
-                    vgaB = fromIntegral vgaBLUE
-
-                return (hsync, vsync, (vgaR, vgaG, vgaB))
+                return (vgaHSYNC, vgaVSYNC, (vgaRED, vgaGREEN, vgaBLUE))
             zoom _1 $ vgaSinkBuf vgaMode buf vgaOut
 
         zoom _2 $ do

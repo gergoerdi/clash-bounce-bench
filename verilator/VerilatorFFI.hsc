@@ -16,9 +16,9 @@ import Foreign.Marshal.Alloc
 
 data Sim
 
-foreign import ccall unsafe "init" simInit :: IO (Ptr Sim)
-foreign import ccall unsafe "shutdown" simShutdown :: Ptr Sim -> IO ()
-foreign import ccall unsafe "step" simStep :: Ptr Sim -> Ptr INPUT -> Ptr OUTPUT -> IO ()
+foreign import ccall unsafe "vinit" simInit :: IO (Ptr Sim)
+foreign import ccall unsafe "vshutdown" simShutdown :: Ptr Sim -> IO ()
+foreign import ccall unsafe "vstep" simStep :: Ptr Sim -> Ptr INPUT -> Ptr OUTPUT -> IO ()
 
 instance Storable Bit where
     alignment = alignment . bitToBool

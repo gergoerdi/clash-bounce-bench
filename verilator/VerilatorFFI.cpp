@@ -4,11 +4,6 @@
 
 #include <iostream>
 
-void hello()
-{
-    std::cout << "Hello from the other side" << std::endl;
-}
-
 vluint64_t main_time = 0;
 
 double sc_time_stamp ()
@@ -16,18 +11,18 @@ double sc_time_stamp ()
     return main_time;
 }
 
-VBounce* init()
+VBounce* vinit()
 {
     // Verilated::commandArgs(0, 0);
     return new VBounce();
 }
 
-void shutdown(VBounce *top)
+void vshutdown(VBounce *top)
 {
     delete top;
 }
 
-void step(VBounce* top, const INPUT* input, OUTPUT* output)
+void vstep(VBounce* top, const INPUT* input, OUTPUT* output)
 {
     top->RESET = input->RESET;
 

@@ -5,13 +5,13 @@
 
 int main(int argc, char** argv, char** env)
 {
-    VBounce* top = init();
+    VBounce* top = vinit();
 
     INPUT input;
     OUTPUT output;
 
     input.RESET = 1;
-    step(top, &input, &output);
+    vstep(top, &input, &output);
     input.RESET = 0;
 
     int cycles = 0;
@@ -21,14 +21,14 @@ int main(int argc, char** argv, char** env)
     {
         for (;;)
         {
-            step(top, &input, &output);
+            vstep(top, &input, &output);
             cycles++;
             if (output.VGA_HSYNC == 0 && output.VGA_VSYNC == 0) break;
         }
 
         for (;;)
         {
-            step(top, &input, &output);
+            vstep(top, &input, &output);
             cycles++;
             if (output.VGA_DE) break;
         }
@@ -37,5 +37,6 @@ int main(int argc, char** argv, char** env)
     int ms = (((double)(t - t0))/CLOCKS_PER_SEC) * 1000;
 
     printf("Verilator, from C: %d cycles, %d ms\n", cycles, ms);
+    vshutdown(top);
     return 0;
 }

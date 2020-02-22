@@ -18,18 +18,14 @@ millisec :: TimeSpec -> Int64
 millisec (TimeSpec sec nsec) = sec * 1_000 + nsec `div` 1_000_000
 
 main :: IO ()
-main = do
-    inp <- malloc
+main = alloca $ \inp -> alloca $ \outp -> do
     poke inp $ INPUT{ reset = False }
-    outp <- malloc
-
-    let finished OUTPUT{..} = vgaHSYNC == low && vgaVSYNC == low
 
     let loop1 n = do
             topEntity inp outp
-            out <- peek outp
+            out@OUTPUT{..} <- peek outp
             let n' = n + 1
-            if finished out then loop2 n' else loop1 n'
+            if vgaHSYNC == low && vgaVSYNC == low then loop2 n' else loop1 n'
         loop2 n = do
             topEntity inp outp
             out <- peek outp

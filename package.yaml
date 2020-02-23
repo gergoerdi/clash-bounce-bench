@@ -7,6 +7,7 @@ dependencies:
   - clash-prelude
   - clash-lib
   - clash-ghc
+  - retroclash-lib
   - sdl2
   - mtl
   - text
@@ -17,8 +18,6 @@ dependencies:
   - ghc-typelits-knownnat
   - clock
   - monad-loops
-  - extra
-
 
 ghc-options:
   -fplugin GHC.TypeLits.KnownNat.Solver

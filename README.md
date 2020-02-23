@@ -11,9 +11,8 @@ Hand-translated C, from C: 4192001 cycles, 61 ms
 
 ```
 $ cd verilator
-$ ./mk.sh
 $ make
-$ ./_build/SimMain
+$ ../_build/verilator/SimMain
 Verilator, from C: 4192001 cycles, 125 ms
 ```
 

@@ -1,24 +1,49 @@
-CPPFLAGS	= $(shell pkg-config --cflags verilator) -I_verilator
-CXXFLAGS	= -fPIC -O3
-VERILATOR_OBJS	= _verilator/verilated.o
-VERILATOR_LIBS	= _verilator/VSim__ALL.a
+CLASH_SRC	= Bounce.hs
+CLASH_DIR	= ../src
+VERILOG_SRCS	= ../_build/clash-syn/verilog/Bounce/Bounce/Bounce.v
 
-all: _build/libVerilatorFFI.a _build/SimMain
+OUT_ROOT	= ../_build
+SYN_DIR		= $(OUT_ROOT)/clash-syn
+SIM_DIR		= $(OUT_ROOT)/verilator
+VERILATOR_HDRS	= $(SIM_DIR)/VSim.h
+VERILATOR_LIB	= $(SIM_DIR)/VSim__ALL.a
+VERILATOR_OBJS  = $(SIM_DIR)/verilated.o
+
+CPPFLAGS	= $(shell pkg-config --cflags verilator) -I$(SIM_DIR)
+CXXFLAGS	= -fPIC -O3
+VERILATOR_FLAGS	= -CFLAGS '-O3 -fPIC' -Wno-fatal --prefix VSim
+
+all: $(SIM_DIR)/libVerilatorFFI.a $(SIM_DIR)/SimMain
 
 clean:
-	rm -f _build/libVerilatorFFI.a _build/VerilatorFFI.o _build/SimMain
+	rm -rf $(SYN_DIR)
+	rm -rf $(SIM_DIR)
 
 .PHONY: all clean
 
-_build/VerilatorFFI.o: VerilatorFFI.cpp VerilatorFFI.h VerilatorAPI.h
+$(VERILOG_SRCS): $(CLASH_DIR)/$(CLASH_SRC)
+	stack exec -- clash -i$(CLASH_DIR) -outputdir $(SYN_DIR) --verilog $(CLASH_DIR)/$(CLASH_SRC)
 
-_build/libVerilatorFFI.a: _build/VerilatorFFI.o $(VERILATOR_OBJS) $(VERILATOR_LIBS)
+$(SIM_DIR)/VSim.mk: $(VERILOG_SRCS)
+	verilator $(VERILATOR_FLAGS) --cc -Mdir $(SIM_DIR) $(VERILOG_SRCS)
+
+$(SIM_DIR)/verilated.o: $(shell pkg-config --variable=includedir verilator)/verilated.cpp
+	$(COMPILE.cc) $(OUTPUT_OPTION) $<
+
+$(VERILATOR_LIB) $(VERILATOR_HDRS): $(SIM_DIR)/VSim.mk 
+	cd $(SIM_DIR) && make -f VSim.mk
+
+$(SIM_DIR)/VerilatorFFI.o: VerilatorFFI.cpp VerilatorFFI.h VerilatorAPI.h $(VERILATOR_HDRS)
+
+$(SIM_DIR)/libVerilatorFFI.a: $(SIM_DIR)/VerilatorFFI.o $(VERILATOR_LIB) $(VERILATOR_OBJS)
 	rm -f $@
+	mkdir -p $(SIM_DIR)
 	ar rcsT $@ $^
 
-_build/SimMain: _build/SimMain.o _build/libVerilatorFFI.a
+$(SIM_DIR)/SimMain: $(SIM_DIR)/SimMain.o $(SIM_DIR)/libVerilatorFFI.a
 	$(CXX) -o $@ $^
 
-_build/%.o : %.cpp
+$(SIM_DIR)/%.o : %.cpp
+	mkdir -p $(SIM_DIR)
 	$(COMPILE.cc) $(OUTPUT_OPTION) $<
 

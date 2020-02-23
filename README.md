@@ -3,7 +3,7 @@
 ```
 $ cd csim
 $ make
-$ ./Bounce
+$ ../_build/csim/Bounce
 Hand-translated C, from C: 4192001 cycles, 61 ms
 ```
 

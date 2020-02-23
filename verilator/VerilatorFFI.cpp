@@ -1,4 +1,4 @@
-#include "VBounce.h"
+#include "VSim.h"
 #include "verilated.h"
 #include "VerilatorFFI.h"
 
@@ -11,18 +11,18 @@ double sc_time_stamp ()
     return main_time;
 }
 
-VBounce* vinit()
+VSim* vinit()
 {
     // Verilated::commandArgs(0, 0);
-    return new VBounce();
+    return new VSim();
 }
 
-void vshutdown(VBounce *top)
+void vshutdown(VSim *top)
 {
     delete top;
 }
 
-void vstep(VBounce* top, const INPUT* input, OUTPUT* output)
+void vstep(VSim* top, const INPUT* input, OUTPUT* output)
 {
     top->RESET = input->RESET;
 

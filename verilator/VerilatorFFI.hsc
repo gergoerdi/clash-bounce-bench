@@ -14,11 +14,11 @@ import Foreign.Marshal.Alloc
 
 #include "VerilatorAPI.h"
 
-data Sim
+data VSim
 
-foreign import ccall unsafe "vinit" simInit :: IO (Ptr Sim)
-foreign import ccall unsafe "vshutdown" simShutdown :: Ptr Sim -> IO ()
-foreign import ccall unsafe "vstep" simStep :: Ptr Sim -> Ptr INPUT -> Ptr OUTPUT -> IO ()
+foreign import ccall unsafe "vinit" simInit :: IO (Ptr VSim)
+foreign import ccall unsafe "vshutdown" simShutdown :: Ptr VSim -> IO ()
+foreign import ccall unsafe "vstep" simStep :: Ptr VSim -> Ptr INPUT -> Ptr OUTPUT -> IO ()
 
 instance Storable Bit where
     alignment = alignment . bitToBool

@@ -1,20 +1,24 @@
-CPPFLAGS	= $(shell pkg-config --cflags verilator) -I_verilator-lib
+CPPFLAGS	= $(shell pkg-config --cflags verilator) -I_verilator
 CXXFLAGS	= -fPIC -O3
-VERILATOR_OBJS	= _verilator-exe/verilated.o
-VERILATOR_LIBS	= _verilator-lib/VBounce__ALL.a
+VERILATOR_OBJS	= _verilator/verilated.o
+VERILATOR_LIBS	= _verilator/VSim__ALL.a
 
-all: libVerilatorFFI.a SimMain
+all: _build/libVerilatorFFI.a _build/SimMain
 
 clean:
-	rm -f libVerilatorFFI.a VerilatorFFI.o
+	rm -f _build/libVerilatorFFI.a _build/VerilatorFFI.o _build/SimMain
 
 .PHONY: all clean
 
-VerilatorFFI.o: VerilatorFFI.cpp VerilatorFFI.h VerilatorAPI.h
+_build/VerilatorFFI.o: VerilatorFFI.cpp VerilatorFFI.h VerilatorAPI.h
 
-libVerilatorFFI.a: VerilatorFFI.o $(VERILATOR_OBJS) $(VERILATOR_LIBS)
+_build/libVerilatorFFI.a: _build/VerilatorFFI.o $(VERILATOR_OBJS) $(VERILATOR_LIBS)
 	rm -f $@
 	ar rcsT $@ $^
 
-SimMain: SimMain.o libVerilatorFFI.a
+_build/SimMain: _build/SimMain.o _build/libVerilatorFFI.a
 	$(CXX) -o $@ $^
+
+_build/%.o : %.cpp
+	$(COMPILE.cc) $(OUTPUT_OPTION) $<
+

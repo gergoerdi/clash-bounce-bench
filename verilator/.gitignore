@@ -1,6 +1,2 @@
 _build
-_verilator-exe
-_verilator-lib
-
-VerilatorFFI.o
-libVerilatorFFI.a
+_verilator

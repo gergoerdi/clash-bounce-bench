@@ -5,7 +5,7 @@
 
 int main(int argc, char** argv, char** env)
 {
-    VBounce* top = vinit();
+    VSim* top = vinit();
 
     INPUT input;
     OUTPUT output;

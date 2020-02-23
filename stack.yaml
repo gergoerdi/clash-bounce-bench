@@ -2,6 +2,7 @@ resolver: clash-1.0.yaml
 
 packages:
   - retroclash-lib
+  - retroclash-sim
   - .
 
 extra-deps:

@@ -7,15 +7,18 @@ dependencies:
   - clash-prelude
   - clash-lib
   - clash-ghc
+  - ghc-typelits-natnormalise
+  - ghc-typelits-extra
+  - ghc-typelits-knownnat
+
   - retroclash-lib
+  - retroclash-sim
+
   - sdl2
   - mtl
   - text
   - array
   - lens
-  - ghc-typelits-natnormalise
-  - ghc-typelits-extra
-  - ghc-typelits-knownnat
   - clock
   - monad-loops
 

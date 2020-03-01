@@ -16,6 +16,7 @@ dependencies:
 
   - sdl2
   - mtl
+  - transformers
   - text
   - array
   - lens

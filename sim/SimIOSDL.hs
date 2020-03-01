@@ -2,7 +2,7 @@
 module SimIOSDL where
 
 import Prelude
-import Clash.Prelude hiding (undefined)
+import Clash.Prelude hiding (lift)
 import Interface
 
 import RetroClash.Sim.SDL
@@ -21,6 +21,7 @@ import Control.Monad.State
 import Data.Array.IO
 
 import System.Clock
+import Control.Monad.Loops
 import Control.Monad.Loops
 import Text.Printf
 import Control.Lens
@@ -45,12 +46,14 @@ runSDL title runCycle = do
             , screenRefreshRate = 60
             }
 
-    flip evalStateT (initSink, (0, t0)) $ withMainWindow videoParams $ \events keyState -> fmap Just $ do
+    flip evalStateT (initSink, (0, t0)) $ withMainWindow videoParams $ \events keyDown -> do
+        when (keyDown ScancodeEscape) mzero
+
         untilM_ (return ()) $ do
             vgaOut <- do
                 OUTPUT{..} <- liftIO $ runCycle input
                 return (vgaHSYNC, vgaVSYNC, (vgaRED, vgaGREEN, vgaBLUE))
-            zoom _1 $ vgaSinkBuf vgaMode buf vgaOut
+            zoom _1 $ lift $ vgaSinkBuf vgaMode buf vgaOut
 
         zoom _2 $ do
             (i, t0) <- get

@@ -39,7 +39,13 @@ runSDL title runCycle = do
 
     let input = INPUT{ reset = False }
 
-    flip evalStateT (initSink, (0, t0)) $ withMainWindow title 1 $ \events keyState -> fmap Just $ do
+    let videoParams = MkVideoParams
+            { windowTitle = title
+            , screenScale = 1
+            , screenRefreshRate = 60
+            }
+
+    flip evalStateT (initSink, (0, t0)) $ withMainWindow videoParams $ \events keyState -> fmap Just $ do
         untilM_ (return ()) $ do
             vgaOut <- do
                 OUTPUT{..} <- liftIO $ runCycle input

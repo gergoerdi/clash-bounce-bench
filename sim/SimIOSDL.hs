@@ -20,7 +20,7 @@ import Control.Monad
 import Control.Monad.State
 import Data.Array.IO
 
-import System.Clock
+import SDL (ticks)
 import Control.Monad.Loops
 import Control.Monad.Loops
 import Text.Printf
@@ -29,14 +29,10 @@ import Data.Text
 
 vgaMode = vga640x480at60
 
-millisec :: TimeSpec -> Int64
-millisec (TimeSpec sec nsec) = sec * 1_000 + nsec `div` 1_000_000
-
 {-# INLINE runSDL #-}
 runSDL :: Text -> (INPUT -> IO OUTPUT) -> IO ()
 runSDL title runCycle = do
     buf <- newBufferArray
-    t0 <- getTime Monotonic
 
     let input = INPUT{ reset = False }
 
@@ -46,6 +42,7 @@ runSDL title runCycle = do
             , screenRefreshRate = 60
             }
 
+    t0 <- ticks
     flip evalStateT (initSink, (0, t0)) $ withMainWindow videoParams $ \events keyDown -> do
         when (keyDown ScancodeEscape) mzero
 
@@ -58,11 +55,11 @@ runSDL title runCycle = do
         zoom _2 $ do
             (i, t0) <- get
             if i == 60 then do
-                t <- liftIO $ getTime Monotonic
-                let dt = millisec t - millisec t0
+                t <- ticks
+                let dt = t - t0
                     fps = 1000 / (fromIntegral dt / 60) :: Double
                 liftIO $ printf "60 frames in %d ms, %.1f fps\n" dt fps
-                put (0, t)
+                put (1, t)
               else put (i + 1, t0)
 
         return $ rasterizeBuffer buf

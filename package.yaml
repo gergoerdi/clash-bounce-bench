@@ -52,7 +52,7 @@ executables:
 
   sim-hs-sdl:
     source-dirs: sim
-    main: sim-hs.hs
+    main: sim-hs-sdl.hs
 
   sim-ffi: &ffi
     source-dirs:

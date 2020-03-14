@@ -33,23 +33,25 @@ main :: IO ()
 main = do
     buf <- newBufferArray
 
-    inChan <- liftIO newChan
-    liftIO $ writeChan inChan ()
-    is <- liftIO $ getChanContents inChan
+    inChan <- newChan
+    writeChan inChan ()
+    is <- getChanContents inChan
 
-    flip evalStateT (simulate topEntity' is, initSink) $ withMainWindow "VGA" 3 $ \events keyState -> fmap Just $ do
+    flip evalStateT (simulate topEntity' is, initSink) $ withMainWindow videoParams $ \events keyDown -> do
+        guard $ not $ keyDown ScancodeEscape
+
         i <- return ()
 
         t0 <- liftIO $ getTime Monotonic
         untilM_ (return ()) $ do
-            vgaOut <- zoom _1 $ do
+            vgaOut <- lift $ zoom _1 $ do
                 (o:os) <- get
                 _ <- liftIO $ readChan inChan
                 liftIO $ writeChan inChan i
                 put os
                 return o
 
-            zoom _2 $ vgaSinkBuf vgaMode buf vgaOut
+            lift $ zoom _2 $ vgaSinkBuf vgaMode buf vgaOut
         t <- liftIO $ getTime Monotonic
         liftIO $ print $ millisec t - millisec t0
 
@@ -57,6 +59,12 @@ main = do
   where
     topEntity' sw =
         let VGAOut{ vgaSync = VGASync{..}, ..} = topEntity clockGen resetGen sw
-        in bundle (vgaHSync, vgaVSync, bundle (vgaR, vgaG, vgaB))
+        in bundle (vgaHSync, vgaVSync, bitCoerce <$> bundle (vgaR, vgaG, vgaB))
 
     millisec (TimeSpec sec nsec) = sec * 1_000 + nsec `div` 1_000_000
+
+    videoParams = MkVideoParams
+        { windowTitle = "VGA"
+        , screenScale = 2
+        , screenRefreshRate = 60
+        }

@@ -1,14 +1,11 @@
-{-# LANGUAGE NumericUnderscores, RecordWildCards #-}
-{-# LANGUAGE RecursiveDo #-}
-{-# LANGUAGE RankNTypes #-}
-{-# LANGUAGE RecordWildCards #-}
-{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE NumericUnderscores, RecordWildCards, OverloadedStrings #-}
 module Main where
 
 import Bounce
 import RetroClash.Sim.VGA
 import RetroClash.Sim.SDL
 import RetroClash.Sim.VGASDL
+import RetroClash.Sim.IO
 
 import RetroClash.Utils
 import RetroClash.VGA
@@ -33,25 +30,16 @@ main :: IO ()
 main = do
     buf <- newBufferArray
 
-    inChan <- newChan
-    writeChan inChan ()
-    is <- getChanContents inChan
-
-    flip evalStateT (simulate topEntity' is, initSink) $ withMainWindow videoParams $ \events keyDown -> do
+    sim <- driveIO (simulate topEntity') undefined
+    flip evalStateT initSink $ withMainWindow videoParams $ \events keyDown -> do
         guard $ not $ keyDown ScancodeEscape
 
-        i <- return ()
-
         t0 <- liftIO $ getTime Monotonic
-        untilM_ (return ()) $ do
-            vgaOut <- lift $ zoom _1 $ do
-                (o:os) <- get
-                _ <- liftIO $ readChan inChan
-                liftIO $ writeChan inChan i
-                put os
-                return o
 
-            lift $ zoom _2 $ vgaSinkBuf vgaMode buf vgaOut
+        untilM_ (return ()) $ sim $ \vgaOut -> do
+            frameFinished <- lift $ vgaSinkBuf vgaMode buf vgaOut
+            return ((), frameFinished)
+
         t <- liftIO $ getTime Monotonic
         liftIO $ print $ millisec t - millisec t0
 

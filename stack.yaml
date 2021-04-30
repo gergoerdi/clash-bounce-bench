@@ -1,9 +1,6 @@
-resolver: clash-1.2.yaml
+resolver: clash-HEAD.yaml
 
 packages:
   - retroclash-lib
   - retroclash-sim
   - .
-
-extra-deps:
-  - higgledy-0.3.1.0

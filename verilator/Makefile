@@ -1,6 +1,6 @@
 CLASH_SRC	= Bounce.hs
 CLASH_DIR	= ../src
-VERILOG_SRCS	= ../_build/clash-syn/verilog/Bounce/Bounce/Bounce.v
+VERILOG_SRCS	= ../_build/clash-syn/Bounce.topEntity/topEntity.v
 
 OUT_ROOT	= ../_build
 SYN_DIR		= $(OUT_ROOT)/clash-syn

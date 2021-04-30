@@ -3,6 +3,7 @@
 module Bounce where
 
 import Clash.Prelude
+import Clash.Annotations.TH
 import RetroClash.Utils
 import RetroClash.VGA
 import RetroClash.Video
@@ -26,21 +27,11 @@ vga640x480sim = VGATimings
     , vgaVertTiming  = VGATiming Low (SNat @1) (SNat @1) (SNat @1)
     }
 
-{-# ANN topEntity
-  (Synthesize
-    { t_name   = "Bounce"
-    , t_inputs =
-          [ PortName "CLK_25MHZ"
-          , PortName "RESET"
-          ]
-    , t_output =
-            vgaPort
-    }) #-}
 topEntity
-    :: Clock Dom25
-    -> Reset Dom25
-    -> Signal Dom25 ()
-    -> VGAOut Dom25 8 8 8
+    :: "CLK_25MHZ" ::: Clock Dom25
+    -> "RESET" ::: Reset Dom25
+    -> "DUMMY" ::: Signal Dom25 ()
+    -> "VGA" ::: VGAOut Dom25 8 8 8
 topEntity = withEnableGen board
   where
     board _ = vgaOut vgaSync $ bouncingBall vgaX vgaY
@@ -102,3 +93,5 @@ reflect (p, n) (x, dx)
   where
     sameDirection u v = compare 0 u == compare 0 v
     diff = p - x
+
+makeTopEntity 'topEntity

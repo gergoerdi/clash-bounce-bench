@@ -11,7 +11,15 @@ VERILATOR_OBJS  = $(SIM_DIR)/verilated.o
 
 CPPFLAGS	= $(shell pkg-config --cflags verilator) -I$(SIM_DIR)
 CXXFLAGS	= -fPIC -O3
-VERILATOR_FLAGS	= -CFLAGS '-O3 -fPIC' -Wno-fatal --prefix VSim
+VERILATOR_FLAGS	= -CFLAGS '-O3 -fPIC' -Wno-fatal --prefix VSim +1364-2001ext+v
+
+# THREADS := 1
+
+ifdef THREADS
+VERILATOR_OBJS  += $(SIM_DIR)/verilated_threads.o
+CPPFLAGS	+= -DVL_THREADED=1
+VERILATOR_FLAGS	+= --threads $(THREADS)
+endif
 
 all: $(SIM_DIR)/libVerilatorFFI.a $(SIM_DIR)/SimMain
 
@@ -28,6 +36,9 @@ $(SIM_DIR)/VSim.mk: $(VERILOG_SRCS)
 	verilator $(VERILATOR_FLAGS) --cc -Mdir $(SIM_DIR) $(VERILOG_SRCS)
 
 $(SIM_DIR)/verilated.o: $(shell pkg-config --variable=includedir verilator)/verilated.cpp
+	$(COMPILE.cc) $(OUTPUT_OPTION) $<
+
+$(SIM_DIR)/verilated_threads.o: $(shell pkg-config --variable=includedir verilator)/verilated_threads.cpp
 	$(COMPILE.cc) $(OUTPUT_OPTION) $<
 
 $(VERILATOR_LIB) $(VERILATOR_HDRS): $(SIM_DIR)/VSim.mk 

@@ -47,7 +47,7 @@ mask def f x y = mux visible (f x y) def
   where
     visible = (isJust <$> x) .&&. (isJust <$> y)
 
-type BallSize = 15
+type BallSize = 35
 
 bouncingBall
     :: (KnownNat w, KnownNat h, KnownNat r, KnownNat g, KnownNat b)

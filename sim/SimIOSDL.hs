@@ -40,6 +40,7 @@ runSDL title runCycle = do
             { windowTitle = title
             , screenScale = 1
             , screenRefreshRate = 60
+            , reportFPS = True
             }
 
     t0 <- ticks

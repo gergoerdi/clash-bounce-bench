@@ -30,7 +30,7 @@ main :: IO ()
 main = do
     buf <- newBufferArray
 
-    sim <- driveIO (simulate topEntity') undefined
+    sim <- simulateIO topEntity' undefined
     flip evalStateT initSink $ withMainWindow videoParams $ \events keyDown -> do
         guard $ not $ keyDown ScancodeEscape
 
@@ -55,4 +55,5 @@ main = do
         { windowTitle = "VGA"
         , screenScale = 2
         , screenRefreshRate = 60
+        , reportFPS = True
         }
